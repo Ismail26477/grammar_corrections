@@ -5,54 +5,54 @@ from gramformer import Gramformer
 import language_tool_python
 import re
 import json
-import sqlite3
+import mysql.connector
 from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-DATABASE = 'corrections.db' 
-
-# SQLite database setup
+# MySQL database setup
 def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
-    return db
-
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
+    if not hasattr(g, '_database'):
+        g._database = mysql.connector.connect(
+            host="127.0.0.1:3306",
+            user="root",
+            password="1234",
+            database="amit",
+            port=3306
+        )
+    return g._database 
 
 def init_db():
     with app.app_context():
         db = get_db()
         cursor = db.cursor()
+
+        # Create the corrections table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS corrections (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id INT AUTO_INCREMENT PRIMARY KEY,
                 user_input TEXT NOT NULL,
                 corrected_output TEXT NOT NULL,
-                total_errors INTEGER,
-                capitalization_errors INTEGER,
-                spelling_errors INTEGER,
-                grammar_errors INTEGER,
-                punctuation_errors INTEGER,
-                detailed_errors TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                total_errors INT,
+                capitalization_errors INT,
+                spelling_errors INT,
+                grammar_errors INT,
+                punctuation_errors INT,
+                detailed_errors JSON,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
 
-         # Add a users table
+        # Create the users table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT NOT NULL UNIQUE,
-                password TEXT NOT NULL
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                username VARCHAR(255) NOT NULL UNIQUE,
+                password VARCHAR(255) NOT NULL
             )
         ''')
+
         db.commit()
 
 # Save data to SQLite
@@ -63,7 +63,7 @@ def save_correction_to_db(user_input, corrected_output, counts, corrections):
         INSERT INTO corrections 
         (user_input, corrected_output, total_errors, capitalization_errors,
          spelling_errors, grammar_errors, punctuation_errors, detailed_errors)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     ''', (
         user_input,
         corrected_output,
@@ -207,19 +207,19 @@ def correct_text():
     # Apply corrections in order
     spell_corrections, text = correct_spelling(text)
     corrections["spelling"].extend(spell_corrections)
-    counts["spelling"] = len(spell_corrections)
+    counts["spelling"] = 1 if len(spell_corrections) > 0 else 0
 
     punct_corrections, text = correct_punctuation(text)
     corrections["punctuation"].extend(punct_corrections)
-    counts["punctuation"] = len(punct_corrections)
+    counts["punctuation"] = 1 if len(punct_corrections) > 0 else 0
 
     grammar_corrections, text = correct_grammar(text)
     corrections["grammar"].extend(grammar_corrections)
-    counts["grammar"] = len(grammar_corrections)
+    counts["grammar"] = 1 if len(grammar_corrections) > 0 else 0
 
     capital_corrections, text = correct_capitalization(text)
     corrections["capitalization"].extend(capital_corrections)
-    counts["capitalization"] = len(capital_corrections)
+    counts["capitalization"] = 1 if len(capital_corrections) > 0 else 0
 
     # Combine all corrections and calculate total errors
     for key in corrections:
@@ -227,7 +227,6 @@ def correct_text():
             corrections["all"].extend(corrections[key])
 
     counts["all"] = counts["capitalization"] + counts["spelling"] + counts["grammar"] + counts["punctuation"]
-
     save_correction_to_db(request.form['text'], text, counts, corrections)
 
     return jsonify({
@@ -243,12 +242,12 @@ def login():
         password = request.form['password']
 
         db = get_db()
-        cursor = db.cursor()
-        cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
         user = cursor.fetchone()
 
-        if user and user[2] == password: 
-            session['username'] = user[1] 
+        if user and user['password'] == password: 
+            session['username'] = user['username']
             return redirect(url_for('view_corrections'))
         else:
             return render_template('login.html', error="Invalid credentials")
@@ -263,7 +262,7 @@ def register():
 
         db = get_db()
         cursor = db.cursor()
-        cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+        cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
         db.commit()
 
         return redirect(url_for('login'))

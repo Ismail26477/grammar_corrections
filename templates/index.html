@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Correction Application</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container"> 
+        <!-- Top Navigation Bar -->
+        <nav class="topnav">
+            <div class="nav-content">
+                <span class="logo">Grammarly</span>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Left Sidebar --> 
+            <div class="left-sidebar">
+                <div class="leftnav">
+                    <a href="#">Capitalization</a>
+                    <a href="#">Grammar</a>
+                    <a href="#">Spelling</a>
+                    <a href="#">Punctuation</a>
+                </div>
+            </div>
+
+            <!-- Middle Content -->
+            <div class="content">
+                <textarea id="text-input" placeholder="Submit your text here..."></textarea>
+                <button id="correct-button">Submit</button>
+                <div id="loader" class="loader" style="display: none;"></div>
+                <div class="output-section blur">
+                    <!--
+                    <h3>Corrected Text</h3>
+                    <pre id="corrected-text"></pre>
+                    <br>
+                    <h3>Corrections</h3> 
+                    <div class="tabs">
+                        <div class="tab active" data-tab="all">All Errors (<span id="all-count">0</span>)</div>
+                        <div class="tab" data-tab="capitalization">Capitalization Errors (<span id="capitalization-count">0</span>)</div>
+                        <div class="tab" data-tab="grammar">Grammar Errors (<span id="grammar-count">0</span>)</div>
+                        <div class="tab" data-tab="spelling">Spelling Errors (<span id="spelling-count">0</span>)</div>
+                        <div class="tab" data-tab="punctuation">Punctuation Errors (<span id="punctuation-count">0</span>)</div>
+                    </div>
+                    <ul id="corrections-list" class="error-list"></ul>
+                    -->
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="right-sidebar">
+                <div class="rightnav">
+                    <a href="#">Capitalization</a>
+                    <a href="#">Grammar</a>
+                    <a href="#">Spelling</a>
+                    <a href="#">Punctuation</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html> 

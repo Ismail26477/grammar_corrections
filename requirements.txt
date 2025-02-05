@@ -1,0 +1,7 @@
+flask>=2.0.1
+pyaspeller>=0.5.2
+deepmultilingualpunctuation>=0.1.1
+gramformer>=1.0
+language_tool_python>=2.7.0
+torch>=1.10.0
+transformers>=4.12.0

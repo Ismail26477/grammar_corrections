@@ -1,0 +1,126 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Verdana, sans-serif; 
+}
+
+body { 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #4CAF50, #4CAF50);
+    color: #fff;
+}
+
+.register-container {
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.register-header h1 {
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.register-header p {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    text-align: left;
+}
+
+label {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #555;
+    display: block;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: #4a8f4d;
+    box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
+    outline: none;
+}
+
+.submit-btn {
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.submit-btn:hover {
+    background-color: #4a8f4d;
+    transform: translateY(-2px);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.register-footer {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+}
+
+.register-footer a {
+    color: #4CAF50;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.register-footer a:hover {
+    text-decoration: underline;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 480px) {
+    .register-container {
+        padding: 20px;
+    }
+}
